@@ -107,3 +107,9 @@ class PGICompiler(Compiler):
     def thread_flags(self, env: 'Environment') -> T.List[str]:
         # PGI cannot accept -pthread, it's already threaded
         return []
+
+    def get_preprocess_only_args(self) -> T.List[str]:
+        # NOTE: The order is important, the following order is able to
+        # pre-process input, while with the '-E' flag first pre-processing
+        # would halt and output nothing
+        return ['-Mcpp', '-E']

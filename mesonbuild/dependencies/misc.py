@@ -76,21 +76,6 @@ class OpenMPDependency(ExternalDependency):
         language = kwargs.get('language')
         super().__init__('openmp', environment, kwargs, language=language)
         self.is_found = False
-        if self.clib_compiler.get_id() == 'pgi':
-            # through at least PGI 19.4, there is no macro defined for OpenMP, but OpenMP 3.1 is supported.
-            self.version = '3.1'
-            self.is_found = True
-            self.compile_args = self.link_args = self.clib_compiler.openmp_flags()
-            return
-        elif self.clib_compiler.get_id() == 'nvidia_hpc':
-            # Nvidia HPC SDK compilers (rebranded from PGI) does not define the '_OPENMP' macro, but
-            # should support OpenMP according to their documentation
-            # (https://docs.nvidia.com/hpc-sdk/compilers/hpc-compilers-user-guide/index.html#openmp-use)
-            # (https://docs.nvidia.com/hpc-sdk/compilers/hpc-compilers-user-guide/index.html#standards)
-            self.version = '4.5'
-            self.is_found = True
-            self.compile_args = self.link_args = self.clib_compiler.openmp_flags()
-            return
         try:
             openmp_date = self.clib_compiler.get_define(
                 '_OPENMP', '', self.env, self.clib_compiler.openmp_flags(), [self], disable_cache=True)[0]
